@@ -1,0 +1,29 @@
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - echo Pre Build started on `date`
+        - git clone https://github.com/flutter/flutter.git -b stable
+        - export PATH="$PATH:`pwd`/flutter/bin"
+        - flutter precache
+        - flutter doctor
+        - flutter --version
+    build:
+      commands:
+        #- env | grep -e APIURL -e MEDIAURL -e STRIPE_PUBLIC_KEY -e STRIPE_SECRET_KEY -e WSURL >> .env.test
+        #- env | grep -e APIURL -e MEDIAURL -e STRIPE_PUBLIC_KEY -e STRIPE_SECRET_KEY -e WSURL >> .env
+        #- touch backend/.env.test
+        #- echo "APIURL=$APIURL" >> .env
+        #- echo "MEDIAURL=$MEDIAURL" >> .env
+        #- echo "STRIPE_PUBLIC_KEY=$STRIPE_PUBLIC_KEY" >> backend/.env.test
+        #- echo "STRIPE_SECRET_KEY=$STRIPE_SECRET_KEY" >> backend/.env.test
+        #- echo "WSURL=$WSURL" >> backend/.env.test
+        - flutter build web --web-renderer canvaskit --release --dart-define=APIURL=$APIURL --dart-define=MEDIAURL=$MEDIAURL
+        - cp -R assets/. build/web/assets
+  artifacts:
+    # Los archivos que se van a almacenar en el backend de Amplify
+    baseDirectory: build/web
+    files:
+      - '**/*'
+  buildCommand: 'flutter build web --web-renderer canvaskit --release --dart-define=APIURL=$APIURL --dart-define=MEDIAURL=$MEDIAURL'
+  distDir: 'build/web'
